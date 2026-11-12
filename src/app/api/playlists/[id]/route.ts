@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 
-import { requireUser } from "@/lib/auth";
+import { authOptions, requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { createLibraryRepository } from "@/features/library/server/repository";
 import {
@@ -16,7 +17,11 @@ type Context = { params: Promise<{ id: string }> };
 
 export async function GET(_: Request, { params }: Context) {
   const { id } = playlistIdSchema.parse(await params);
-  const data = await createLibraryRepository(prisma).findPlaylist(id);
+  const session = await getServerSession(authOptions);
+  const data = await createLibraryRepository(prisma).findPlaylist(
+    id,
+    session?.user?.id,
+  );
   if (!data)
     return NextResponse.json(
       { error: { code: "NOT_FOUND", message: "Playlist tidak ditemukan" } },

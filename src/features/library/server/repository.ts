@@ -8,9 +8,15 @@ export function createLibraryRepository(db: PrismaClient) {
       ownerId: string,
       input: { name: string; description?: string; isPublic: boolean },
     ) => db.playlist.create({ data: { ownerId, ...input } }),
-    findPlaylist: (id: string) =>
+    findPlaylist: (id: string, viewerId?: string) =>
       db.playlist.findUnique({
-        where: { id },
+        where: {
+          id,
+          OR: [
+            { isPublic: true },
+            ...(viewerId ? [{ ownerId: viewerId }] : []),
+          ],
+        },
         include: { tracks: { orderBy: { position: "asc" } } },
       }),
     listPlaylists: (ownerId: string, take: number, cursor?: string) =>

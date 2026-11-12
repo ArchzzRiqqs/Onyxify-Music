@@ -18,7 +18,7 @@ async function ownedPlaylist(
   id: string,
   ownerId: string,
 ) {
-  const playlist = await repo.findPlaylist(id);
+  const playlist = await repo.findPlaylist(id, ownerId);
   if (!playlist || playlist.ownerId !== ownerId)
     throw new LibraryNotFoundError();
   return playlist;
