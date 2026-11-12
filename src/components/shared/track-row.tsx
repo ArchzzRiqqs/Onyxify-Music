@@ -22,6 +22,10 @@ type TrackRowProps = {
   index?: number;
   isPlaying?: boolean;
   onPlay?: () => void;
+  onPlayNext?: () => void;
+  onEnqueue?: () => void;
+  onAddToPlaylist?: () => void;
+  onCopyLink?: () => void;
   className?: string;
 };
 
@@ -33,6 +37,10 @@ export function TrackRow({
   index,
   isPlaying = false,
   onPlay,
+  onPlayNext,
+  onEnqueue,
+  onAddToPlaylist,
+  onCopyLink,
   className,
 }: TrackRowProps) {
   return (
@@ -59,16 +67,27 @@ export function TrackRow({
       />
       <button
         type="button"
-        className="min-w-0 text-left focus-visible:outline-none"
+        className="focus-visible:ring-accent min-w-0 text-left focus-visible:ring-2 focus-visible:outline-none"
         onClick={onPlay}
+        onDoubleClick={onPlay}
       >
         <span
           className={cn(
-            "block truncate font-medium",
+            "flex items-center gap-2 truncate font-medium",
             isPlaying && "text-accent",
           )}
         >
-          {title}
+          {isPlaying && (
+            <span
+              className="flex h-4 items-end gap-0.5"
+              aria-label="Sedang diputar"
+            >
+              <span className="bg-accent h-2 w-0.5 animate-pulse" />
+              <span className="bg-accent h-3 w-0.5 animate-pulse [animation-delay:150ms]" />
+              <span className="bg-accent h-1.5 w-0.5 animate-pulse [animation-delay:300ms]" />
+            </span>
+          )}
+          <span className="truncate">{title}</span>
         </span>
         <span className="text-muted block truncate text-sm">{artist}</span>
       </button>
@@ -85,8 +104,18 @@ export function TrackRow({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          <DropdownMenuItem>{id.actions.addToQueue}</DropdownMenuItem>
-          <DropdownMenuItem>{id.actions.addToPlaylist}</DropdownMenuItem>
+          <DropdownMenuItem onClick={onPlayNext}>
+            {id.actions.playNext}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onEnqueue}>
+            {id.actions.addToQueue}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onAddToPlaylist}>
+            {id.actions.addToPlaylist}
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={onCopyLink}>
+            {id.actions.copyLink}
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
