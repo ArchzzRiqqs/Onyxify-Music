@@ -68,6 +68,7 @@ export const id = {
     loadErrorDescription: "Terjadi masalah saat menyiapkan halaman ini.",
     featuredTitle: "Pilihan untukmu",
     trackLicense: "Lisensi audio",
+    trackSource: "Sumber audio",
     play: "Putar",
     shuffle: "Acak",
     backToBrowse: "Kembali ke jelajah",

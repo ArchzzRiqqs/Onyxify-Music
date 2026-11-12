@@ -10,6 +10,7 @@ const demoTracks: Track[] = [
   {
     id: "demo-calm",
     provider: "fixtures",
+    source: "Onyxify Fixtures",
     title: "Calm",
     artists: ["Demo Library"],
     album: "Free Music Archive",
@@ -20,6 +21,7 @@ const demoTracks: Track[] = [
   {
     id: "demo-dreams",
     provider: "fixtures",
+    source: "Onyxify Fixtures",
     title: "Dreams",
     artists: ["Demo Library"],
     album: "Free Music Archive",
@@ -30,6 +32,7 @@ const demoTracks: Track[] = [
   {
     id: "demo-summer",
     provider: "fixtures",
+    source: "Onyxify Fixtures",
     title: "Summer",
     artists: ["Demo Library"],
     album: "Free Music Archive",

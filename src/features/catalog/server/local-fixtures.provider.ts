@@ -9,6 +9,7 @@ const tracks: Track[] = [
   {
     id: "fixture-cahaya-kota",
     provider: "fixtures",
+    source: "Onyxify Fixtures",
     title: "Cahaya Kota",
     artists: ["Nara"],
     album: "Malam Neon",
@@ -19,6 +20,7 @@ const tracks: Track[] = [
   {
     id: "fixture-langit-biru",
     provider: "fixtures",
+    source: "Onyxify Fixtures",
     title: "Langit Biru",
     artists: ["Ruang Senja"],
     album: "Malam Neon",

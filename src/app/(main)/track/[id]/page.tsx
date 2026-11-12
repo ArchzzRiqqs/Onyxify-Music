@@ -27,6 +27,9 @@ export default async function TrackPage({
           <h1 className="text-3xl font-semibold">{track.title}</h1>
           <p className="text-muted mt-2">{track.artists.join(", ")}</p>
           <p className="text-muted mt-4 text-sm">
+            {copy.pages.trackSource}: {track.source}
+          </p>
+          <p className="text-muted mt-1 text-sm">
             {copy.pages.trackLicense}: {track.license}
           </p>
         </div>

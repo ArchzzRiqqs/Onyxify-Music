@@ -29,8 +29,10 @@ Struktur kode mengikuti feature-first architecture di `src/`, dengan route tipis
 ## Environment
 
 Required: `DATABASE_URL`, `AUTH_SECRET`, `JAMENDO_CLIENT_ID`, and
-`NEXT_PUBLIC_APP_URL`. Set `MUSIC_PROVIDER=fixtures` for network-free local
-development and tests. Google OAuth uses optional `GOOGLE_CLIENT_ID` and
+`NEXT_PUBLIC_APP_URL`. Set `MUSIC_PROVIDERS=jamendo,audius,archive` to enable
+the legal music providers, or `MUSIC_PROVIDERS=fixtures` for network-free local
+development and tests. `MUSIC_PROVIDER` remains supported as a legacy
+single-provider setting. Google OAuth uses optional `GOOGLE_CLIENT_ID` and
 `GOOGLE_CLIENT_SECRET`. Production rate limiting requires
 `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`; local development uses
 the bounded in-memory fallback when these values are absent.

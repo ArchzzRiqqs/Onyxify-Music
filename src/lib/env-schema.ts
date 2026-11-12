@@ -5,6 +5,11 @@ export const envSchema = z.object({
   AUTH_SECRET: z.string().trim().min(1, "AUTH_SECRET is required"),
   JAMENDO_CLIENT_ID: z.string().trim().min(1, "JAMENDO_CLIENT_ID is required"),
   MUSIC_PROVIDER: z.enum(["jamendo", "fixtures"]).default("fixtures"),
+  MUSIC_PROVIDERS: z
+    .string()
+    .default("fixtures")
+    .transform((value) => value.split(",").map((item) => item.trim()))
+    .pipe(z.array(z.enum(["jamendo", "audius", "archive", "fixtures"])).min(1)),
   NEXT_PUBLIC_APP_URL: z.url("NEXT_PUBLIC_APP_URL must be a valid URL"),
   GOOGLE_CLIENT_ID: z.string().trim().min(1).optional(),
   GOOGLE_CLIENT_SECRET: z.string().trim().min(1).optional(),

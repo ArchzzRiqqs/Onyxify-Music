@@ -7,6 +7,7 @@ const tracks: Track[] = [
   {
     id: "one",
     provider: "test",
+    source: "Test",
     title: "One",
     artists: ["Artist"],
     album: "Album",
@@ -17,6 +18,7 @@ const tracks: Track[] = [
   {
     id: "two",
     provider: "test",
+    source: "Test",
     title: "Two",
     artists: ["Artist"],
     album: "Album",
@@ -27,6 +29,7 @@ const tracks: Track[] = [
   {
     id: "three",
     provider: "test",
+    source: "Test",
     title: "Three",
     artists: ["Artist"],
     album: "Album",

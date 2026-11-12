@@ -6,6 +6,7 @@ import type { Track } from "./schemas";
 const track: Track = {
   id: "test",
   provider: "test",
+  source: "Test",
   title: "Test",
   artists: ["Artist"],
   album: "Album",

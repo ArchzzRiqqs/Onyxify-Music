@@ -19,4 +19,16 @@ describe("environment schema", () => {
 
     expect(result.success).toBe(false);
   });
+
+  it("rejects unknown music providers", () => {
+    const result = envSchema.safeParse({
+      DATABASE_URL: "postgresql://user:password@localhost:5432/onyxify",
+      AUTH_SECRET: "a-secure-secret",
+      JAMENDO_CLIENT_ID: "jamendo-client-id",
+      NEXT_PUBLIC_APP_URL: "http://localhost:3000",
+      MUSIC_PROVIDERS: "jamendo,unknown",
+    });
+
+    expect(result.success).toBe(false);
+  });
 });
