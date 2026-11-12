@@ -1,8 +1,32 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 
 import { CoverImage } from "@/components/shared/cover-image";
 import { getMusicProvider } from "@/features/catalog/server/provider.factory";
 import { id as copy } from "@/lib/i18n/id";
+import { env } from "@/lib/env";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const track = await getMusicProvider().getTrack((await params).id);
+  if (!track) return {};
+  return {
+    title: `${track.title} — ${track.artists.join(", ")}`,
+    description: `${track.title} oleh ${track.artists.join(", ")}. Sumber: ${track.source}.`,
+    alternates: {
+      canonical: new URL(`/track/${track.id}`, env.NEXT_PUBLIC_APP_URL),
+    },
+    openGraph: {
+      type: "music.song",
+      title: track.title,
+      description: `${track.artists.join(", ")} · ${track.source}`,
+      ...(track.coverUrl ? { images: [track.coverUrl] } : {}),
+    },
+  };
+}
 
 export default async function TrackPage({
   params,

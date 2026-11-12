@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import "@/lib/env";
+import { env } from "@/lib/env";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { QueryProvider } from "@/components/shared/query-provider";
@@ -12,8 +12,31 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Onyxify",
+  metadataBase: new URL(env.NEXT_PUBLIC_APP_URL),
+  title: {
+    default: "Onyxify — Streaming Musik Berlisensi",
+    template: "%s | Onyxify",
+  },
   description: "Streaming musik berlisensi dengan pengalaman audio modern.",
+  applicationName: "Onyxify",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    siteName: "Onyxify",
+    title: "Onyxify — Streaming Musik Berlisensi",
+    description: "Temukan dan dengarkan musik berlisensi di Onyxify.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Onyxify — Streaming Musik Berlisensi",
+    description: "Temukan dan dengarkan musik berlisensi di Onyxify.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
 };
 
 export default function RootLayout({
