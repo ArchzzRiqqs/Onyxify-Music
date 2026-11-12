@@ -6,6 +6,7 @@ import type { Track } from "./schemas";
 const tracks: Track[] = [
   {
     id: "one",
+    provider: "test",
     title: "One",
     artists: ["Artist"],
     album: "Album",
@@ -15,6 +16,7 @@ const tracks: Track[] = [
   },
   {
     id: "two",
+    provider: "test",
     title: "Two",
     artists: ["Artist"],
     album: "Album",
@@ -24,6 +26,7 @@ const tracks: Track[] = [
   },
   {
     id: "three",
+    provider: "test",
     title: "Three",
     artists: ["Artist"],
     album: "Album",

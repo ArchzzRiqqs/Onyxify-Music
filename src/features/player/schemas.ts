@@ -2,6 +2,7 @@ import { z } from "zod";
 
 export const TrackSchema = z.object({
   id: z.string().trim().min(1),
+  provider: z.string().trim().min(1),
   title: z.string().trim().min(1),
   artists: z.array(z.string().trim().min(1)).min(1),
   album: z.string().trim().min(1),

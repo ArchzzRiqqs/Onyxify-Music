@@ -1,8 +1,26 @@
-import type { PrismaClient } from "@prisma/client";
+import { Prisma, type PrismaClient } from "@prisma/client";
 
 import type { TrackSnapshotInput } from "./schemas";
 
 export function createLibraryRepository(db: PrismaClient) {
+  const withSerializableRetry = async <T>(
+    operation: (transaction: Prisma.TransactionClient) => Promise<T>,
+  ) => {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      try {
+        return await db.$transaction(operation, {
+          isolationLevel: Prisma.TransactionIsolationLevel.Serializable,
+        });
+      } catch (error) {
+        const retryable =
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          (error.code === "P2034" || error.code === "P2002");
+        if (!retryable || attempt === 2) throw error;
+      }
+    }
+    throw new Error("Transaction retry limit exceeded");
+  };
+
   return {
     createPlaylist: (
       ownerId: string,
@@ -29,42 +47,38 @@ export function createLibraryRepository(db: PrismaClient) {
     renamePlaylist: (id: string, name: string) =>
       db.playlist.update({ where: { id }, data: { name } }),
     deletePlaylist: (id: string) => db.playlist.delete({ where: { id } }),
-    addTrack: async (playlistId: string, track: TrackSnapshotInput) => {
-      const last = await db.playlistTrack.findFirst({
-        where: { playlistId },
-        orderBy: { position: "desc" },
-        select: { position: true },
-      });
-      return db.playlistTrack.create({
-        data: {
-          playlistId,
-          position: (last?.position ?? -1) + 1,
-          ...track,
-          artists: track.artists.join(", "),
-        },
-      });
-    },
+    addTrack: (playlistId: string, track: TrackSnapshotInput) =>
+      withSerializableRetry(async (transaction) => {
+        const last = await transaction.playlistTrack.findFirst({
+          where: { playlistId },
+          orderBy: { position: "desc" },
+          select: { position: true },
+        });
+        return transaction.playlistTrack.create({
+          data: {
+            playlistId,
+            position: (last?.position ?? -1) + 1,
+            ...track,
+            artists: track.artists.join(", "),
+          },
+        });
+      }),
     removeTrack: (id: string) => db.playlistTrack.delete({ where: { id } }),
     reorderTracks: (playlistId: string, trackIds: string[]) =>
-      db
-        .$transaction(
-          trackIds.map((id, position) =>
-            db.playlistTrack.updateMany({
-              where: { id, playlistId },
-              data: { position: -(position + 1) },
-            }),
-          ),
-        )
-        .then(() =>
-          db.$transaction(
-            trackIds.map((id, position) =>
-              db.playlistTrack.updateMany({
-                where: { id, playlistId },
-                data: { position },
-              }),
-            ),
-          ),
-        ),
+      withSerializableRetry(async (transaction) => {
+        for (const [position, id] of trackIds.entries()) {
+          await transaction.playlistTrack.updateMany({
+            where: { id, playlistId },
+            data: { position: -(position + 1) },
+          });
+        }
+        for (const [position, id] of trackIds.entries()) {
+          await transaction.playlistTrack.updateMany({
+            where: { id, playlistId },
+            data: { position },
+          });
+        }
+      }),
     findLiked: (userId: string, take: number, cursor?: string) =>
       db.likedTrack.findMany({
         where: { userId },
@@ -84,23 +98,25 @@ export function createLibraryRepository(db: PrismaClient) {
         data: { userId, ...track, artists: track.artists.join(", ") },
       }),
     toggleLike: async (userId: string, track: TrackSnapshotInput) => {
-      const existing = await db.likedTrack.findUnique({
-        where: {
-          userId_provider_externalId: {
-            userId,
-            provider: track.provider,
-            externalId: track.externalId,
+      return withSerializableRetry(async (transaction) => {
+        const existing = await transaction.likedTrack.findUnique({
+          where: {
+            userId_provider_externalId: {
+              userId,
+              provider: track.provider,
+              externalId: track.externalId,
+            },
           },
-        },
+        });
+        if (existing) {
+          await transaction.likedTrack.delete({ where: { id: existing.id } });
+          return false;
+        }
+        await transaction.likedTrack.create({
+          data: { userId, ...track, artists: track.artists.join(", ") },
+        });
+        return true;
       });
-      if (existing) {
-        await db.likedTrack.delete({ where: { id: existing.id } });
-        return false;
-      }
-      await db.likedTrack.create({
-        data: { userId, ...track, artists: track.artists.join(", ") },
-      });
-      return true;
     },
   };
 }

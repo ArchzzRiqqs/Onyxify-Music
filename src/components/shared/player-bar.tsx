@@ -130,7 +130,7 @@ export function PlayerBar() {
         <div className="ml-auto flex items-center gap-2">
           <LikeButton
             track={{
-              provider: "jamendo",
+              provider: track.provider,
               externalId: track.id,
               title: track.title,
               artists: track.artists,

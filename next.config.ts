@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   cacheComponents: true,
   partialPrefetching: true,
   output: "standalone",
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "images.jamendo.com" },
+      { protocol: "https", hostname: "cdn.pixabay.com" },
+    ],
+  },
   async headers() {
     return [
       {

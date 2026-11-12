@@ -50,6 +50,7 @@ type JamendoTrack = z.infer<typeof jamendoTrackSchema>;
 const mapTrack = (track: JamendoTrack): Track =>
   TrackSchema.parse({
     id: String(track.id),
+    provider: "jamendo",
     title: track.name,
     artists: [track.artist_name],
     album: track.album_name,

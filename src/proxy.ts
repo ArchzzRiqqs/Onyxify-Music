@@ -2,10 +2,9 @@ import { getToken } from "next-auth/jwt";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+import { checkRateLimit, getTrustedClientIp } from "@/lib/rate-limit";
+
 const protectedPaths = ["/library", "/playlist/"];
-const loginAttempts = new Map<string, number[]>();
-const LOGIN_WINDOW_MS = 60_000;
-const LOGIN_LIMIT = 5;
 
 export async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
@@ -13,14 +12,17 @@ export async function proxy(request: NextRequest) {
     pathname === "/api/auth/callback/credentials" &&
     request.method === "POST"
   ) {
-    const ip =
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      "unknown";
-    const now = Date.now();
-    const attempts = (loginAttempts.get(ip) ?? []).filter(
-      (timestamp) => now - timestamp < LOGIN_WINDOW_MS,
+    const ipRate = await checkRateLimit(
+      `login:ip:${getTrustedClientIp(request)}`,
     );
-    if (attempts.length >= LOGIN_LIMIT) {
+    const formData = await request.clone().formData();
+    const identifier =
+      formData.get("email")?.toString().trim().toLowerCase() || "unknown";
+    const identifierRate = await checkRateLimit(
+      `login:identifier:${identifier}`,
+    );
+    if (!ipRate.allowed || !identifierRate.allowed) {
+      const retryAfter = Math.max(ipRate.retryAfter, identifierRate.retryAfter);
       return NextResponse.json(
         {
           error: {
@@ -28,11 +30,9 @@ export async function proxy(request: NextRequest) {
             message: "Terlalu banyak percobaan masuk",
           },
         },
-        { status: 429, headers: { "Retry-After": "60" } },
+        { status: 429, headers: { "Retry-After": String(retryAfter) } },
       );
     }
-    attempts.push(now);
-    loginAttempts.set(ip, attempts);
   }
 
   const protectsPage =

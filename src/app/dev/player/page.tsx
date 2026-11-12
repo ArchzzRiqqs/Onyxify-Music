@@ -9,6 +9,7 @@ import type { Track } from "@/features/player";
 const demoTracks: Track[] = [
   {
     id: "demo-calm",
+    provider: "fixtures",
     title: "Calm",
     artists: ["Demo Library"],
     album: "Free Music Archive",
@@ -18,6 +19,7 @@ const demoTracks: Track[] = [
   },
   {
     id: "demo-dreams",
+    provider: "fixtures",
     title: "Dreams",
     artists: ["Demo Library"],
     album: "Free Music Archive",
@@ -27,6 +29,7 @@ const demoTracks: Track[] = [
   },
   {
     id: "demo-summer",
+    provider: "fixtures",
     title: "Summer",
     artists: ["Demo Library"],
     album: "Free Music Archive",

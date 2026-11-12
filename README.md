@@ -31,7 +31,9 @@ Struktur kode mengikuti feature-first architecture di `src/`, dengan route tipis
 Required: `DATABASE_URL`, `AUTH_SECRET`, `JAMENDO_CLIENT_ID`, and
 `NEXT_PUBLIC_APP_URL`. Set `MUSIC_PROVIDER=fixtures` for network-free local
 development and tests. Google OAuth uses optional `GOOGLE_CLIENT_ID` and
-`GOOGLE_CLIENT_SECRET`.
+`GOOGLE_CLIENT_SECRET`. Production rate limiting requires
+`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`; local development uses
+the bounded in-memory fallback when these values are absent.
 
 ## Docker development
 

@@ -8,6 +8,7 @@ import type { AlbumWithTracks, ArtistWithTopTracks, Page } from "./types";
 const tracks: Track[] = [
   {
     id: "fixture-cahaya-kota",
+    provider: "fixtures",
     title: "Cahaya Kota",
     artists: ["Nara"],
     album: "Malam Neon",
@@ -17,6 +18,7 @@ const tracks: Track[] = [
   },
   {
     id: "fixture-langit-biru",
+    provider: "fixtures",
     title: "Langit Biru",
     artists: ["Ruang Senja"],
     album: "Malam Neon",

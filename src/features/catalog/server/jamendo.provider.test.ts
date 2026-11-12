@@ -41,6 +41,7 @@ describe("JamendoProvider", () => {
 
     expect(track).toMatchObject({
       id: "42",
+      provider: "jamendo",
       title: "Cahaya Kota",
       artists: ["Nara"],
       license: "https://creativecommons.org/licenses/by/4.0/",

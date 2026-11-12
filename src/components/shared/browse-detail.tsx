@@ -93,7 +93,7 @@ export function BrowseDetail({
                 )
               }
               likeTrack={{
-                provider: "jamendo",
+                provider: track.provider,
                 externalId: track.id,
                 title: track.title,
                 artists: track.artists,

@@ -32,7 +32,7 @@ export function useAudioBridge() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          provider: "jamendo",
+          provider: track.provider,
           externalId: track.id,
           title: track.title,
           artists: track.artists,

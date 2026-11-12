@@ -5,18 +5,14 @@ import {
   searchParamsSchema,
 } from "@/features/catalog/server/api-response";
 import { getMusicProvider } from "@/features/catalog/server/provider.factory";
-import { checkRateLimit } from "@/features/catalog/server/rate-limit";
+import { checkRateLimit, getTrustedClientIp } from "@/lib/rate-limit";
 
 export async function GET(request: Request) {
   try {
     const input = searchParamsSchema.parse(
       Object.fromEntries(new URL(request.url).searchParams),
     );
-    const rate = checkRateLimit(
-      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-        request.headers.get("x-real-ip") ??
-        "unknown",
-    );
+    const rate = await checkRateLimit(`search:${getTrustedClientIp(request)}`);
     if (!rate.allowed) {
       return NextResponse.json(
         {
