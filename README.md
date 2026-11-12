@@ -20,7 +20,25 @@ pnpm lint
 pnpm typecheck
 pnpm test
 pnpm build
+pnpm test:coverage
 ```
 
 Struktur kode mengikuti feature-first architecture di `src/`, dengan route tipis di
 `src/app/`.
+
+## Environment
+
+Required: `DATABASE_URL`, `AUTH_SECRET`, `JAMENDO_CLIENT_ID`, and
+`NEXT_PUBLIC_APP_URL`. Set `MUSIC_PROVIDER=fixtures` for network-free local
+development and tests. Google OAuth uses optional `GOOGLE_CLIENT_ID` and
+`GOOGLE_CLIENT_SECRET`.
+
+## Docker development
+
+```bash
+docker compose up --build
+```
+
+The app runs as a non-root user and connects to the bundled PostgreSQL service.
+Run `pnpm prisma migrate dev` (or your deployment migration job) before using
+database-backed routes.
