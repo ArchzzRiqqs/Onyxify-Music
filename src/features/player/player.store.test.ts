@@ -127,4 +127,23 @@ describe("player store", () => {
 
     expect(usePlayerStore.getState().position).toBe(100);
   });
+
+  it("keeps the active track when clearing the upcoming queue", () => {
+    usePlayerStore.getState().playTrack(tracks[0]!, tracks);
+
+    usePlayerStore.getState().clearQueue();
+
+    expect(usePlayerStore.getState().queue.map((track) => track.id)).toEqual([
+      "one",
+    ]);
+    expect(usePlayerStore.getState().isPlaying).toBe(true);
+  });
+
+  it("stores a deadline for a timed sleep timer", () => {
+    vi.spyOn(Date, "now").mockReturnValue(1_000);
+
+    usePlayerStore.getState().setSleepTimer(5);
+
+    expect(usePlayerStore.getState().sleepTimerEndAt).toBe(301_000);
+  });
 });

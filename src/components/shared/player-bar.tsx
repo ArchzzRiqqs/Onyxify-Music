@@ -19,6 +19,8 @@ import { CoverImage } from "./cover-image";
 import { SeekBar } from "./seek-bar";
 import { VolumeSlider } from "./volume-slider";
 import { LikeButton } from "./like-button";
+import { QueuePanel } from "./queue-panel";
+import { useState } from "react";
 
 const formatTime = (seconds: number) => {
   const safeSeconds = Math.max(0, Math.floor(seconds));
@@ -26,6 +28,7 @@ const formatTime = (seconds: number) => {
 };
 
 export function PlayerBar() {
+  const [queueOpen, setQueueOpen] = useState(false);
   const track = usePlayerStore((state) => state.queue[state.currentIndex]);
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const position = usePlayerStore((state) => state.position);
@@ -140,6 +143,8 @@ export function PlayerBar() {
             variant="ghost"
             size="icon-sm"
             aria-label={id.actions.queue}
+            aria-pressed={queueOpen}
+            onClick={() => setQueueOpen((open) => !open)}
           >
             <ListMusic />
           </Button>
@@ -149,6 +154,7 @@ export function PlayerBar() {
           </div>
         </div>
       </div>
+      <QueuePanel open={queueOpen} onClose={() => setQueueOpen(false)} />
     </footer>
   );
 }

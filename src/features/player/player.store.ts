@@ -16,6 +16,8 @@ type PlayerState = {
   muted: boolean;
   shuffle: boolean;
   repeat: RepeatMode;
+  sleepTimerEndAt: number | null;
+  sleepAfterTrack: boolean;
   playTrack: (track: Track, queue?: Track[]) => void;
   togglePlay: () => void;
   setPlaying: (isPlaying: boolean) => void;
@@ -29,6 +31,10 @@ type PlayerState = {
   removeFromQueue: (trackId: string) => void;
   reorderQueue: (fromIndex: number, toIndex: number) => void;
   clear: () => void;
+  clearQueue: () => void;
+  setSleepTimer: (minutes: number | null) => void;
+  setSleepAfterTrack: (enabled: boolean) => void;
+  clearSleepTimer: () => void;
   setPosition: (position: number, duration?: number) => void;
   setStatus: (status: PlayerStatus) => void;
   setVolume: (volume: number) => void;
@@ -85,6 +91,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
   muted: false,
   shuffle: false,
   repeat: "off",
+  sleepTimerEndAt: null,
+  sleepAfterTrack: false,
 
   playTrack: (track, queue = [track]) => {
     const nextQueue = queue.some((item) => item.id === track.id)
@@ -98,6 +106,8 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       status: "loading",
       position: 0,
       duration: track.durationSec,
+      sleepTimerEndAt: null,
+      sleepAfterTrack: false,
     });
   },
 
@@ -105,10 +115,19 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     if (get().currentIndex < 0) {
       return;
     }
-    set((state) => ({ isPlaying: !state.isPlaying }));
+    set((state) => ({
+      isPlaying: !state.isPlaying,
+      ...(state.isPlaying
+        ? {}
+        : { sleepTimerEndAt: null, sleepAfterTrack: false }),
+    }));
   },
 
-  setPlaying: (isPlaying) => set({ isPlaying }),
+  setPlaying: (isPlaying) =>
+    set({
+      isPlaying,
+      ...(isPlaying ? { sleepTimerEndAt: null, sleepAfterTrack: false } : {}),
+    }),
 
   next: () => {
     const { queue, currentIndex, repeat } = get();
@@ -117,6 +136,10 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
     }
     if (repeat === "one") {
       set({ position: 0, isPlaying: true });
+      return;
+    }
+    if (get().sleepAfterTrack) {
+      set({ isPlaying: false, sleepAfterTrack: false });
       return;
     }
     const isLast = currentIndex >= queue.length - 1;
@@ -282,6 +305,27 @@ export const usePlayerStore = create<PlayerState>((set, get) => ({
       position: 0,
       duration: 0,
     }),
+  clearQueue: () => {
+    const state = get();
+    const current = state.queue[state.currentIndex];
+    if (!current) {
+      get().clear();
+      return;
+    }
+    set({
+      queue: [current],
+      originalQueue: [current],
+      currentIndex: 0,
+    });
+  },
+  setSleepTimer: (minutes) =>
+    set({
+      sleepTimerEndAt: minutes === null ? null : Date.now() + minutes * 60_000,
+      sleepAfterTrack: false,
+    }),
+  setSleepAfterTrack: (enabled) =>
+    set({ sleepAfterTrack: enabled, sleepTimerEndAt: null }),
+  clearSleepTimer: () => set({ sleepTimerEndAt: null, sleepAfterTrack: false }),
 
   setPosition: (position, duration) =>
     set({ position, ...(duration ? { duration } : {}) }),

@@ -27,6 +27,9 @@ export const id = {
     cancel: "Batal",
     like: "Sukai lagu",
     unlike: "Hapus suka",
+    close: "Tutup",
+    removeFromQueue: "Hapus dari antrean",
+    clearQueue: "Bersihkan antrean",
   },
   nav: {
     home: "Beranda",
