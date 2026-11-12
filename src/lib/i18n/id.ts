@@ -43,6 +43,9 @@ export const id = {
     pageDescription: "Temukan musik favoritmu dan mulai dengarkan.",
     loadErrorTitle: "Halaman tidak dapat dimuat",
     loadErrorDescription: "Terjadi masalah saat menyiapkan halaman ini.",
+    featuredTitle: "Pilihan untukmu",
+    trackLicense: "Lisensi audio",
+    play: "Putar",
   },
   design: {
     eyebrow: "Onyxify design system",
