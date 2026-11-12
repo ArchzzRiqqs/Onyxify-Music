@@ -18,6 +18,7 @@ import { usePlayerStore } from "@/features/player";
 import { CoverImage } from "./cover-image";
 import { SeekBar } from "./seek-bar";
 import { VolumeSlider } from "./volume-slider";
+import { LikeButton } from "./like-button";
 
 const formatTime = (seconds: number) => {
   const safeSeconds = Math.max(0, Math.floor(seconds));
@@ -124,6 +125,16 @@ export function PlayerBar() {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
+          <LikeButton
+            track={{
+              provider: "jamendo",
+              externalId: track.id,
+              title: track.title,
+              artists: track.artists,
+              coverUrl: track.coverUrl,
+              durationSec: track.durationSec,
+            }}
+          />
           <Button
             type="button"
             variant="ghost"

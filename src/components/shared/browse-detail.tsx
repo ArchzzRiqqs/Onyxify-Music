@@ -92,6 +92,14 @@ export function BrowseDetail({
                   `${window.location.origin}/track/${track.id}`,
                 )
               }
+              likeTrack={{
+                provider: "jamendo",
+                externalId: track.id,
+                title: track.title,
+                artists: track.artists,
+                coverUrl: track.coverUrl,
+                durationSec: track.durationSec,
+              }}
             />
           ))}
         </div>

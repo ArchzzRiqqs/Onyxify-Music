@@ -18,11 +18,30 @@ const isTextInput = (target: EventTarget | null) => {
 
 export function useAudioBridge() {
   const syncingFromEngine = useRef(false);
+  const recordedTrackId = useRef<string | undefined>(undefined);
   const track = usePlayerStore((state) => state.queue[state.currentIndex]);
   const isPlaying = usePlayerStore((state) => state.isPlaying);
   const position = usePlayerStore((state) => state.position);
   const volume = usePlayerStore((state) => state.volume);
   const muted = usePlayerStore((state) => state.muted);
+
+  useEffect(() => {
+    if (track?.id !== recordedTrackId.current && position >= 30 && track) {
+      recordedTrackId.current = track.id;
+      void fetch("/api/library/recent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider: "jamendo",
+          externalId: track.id,
+          title: track.title,
+          artists: track.artists,
+          coverUrl: track.coverUrl,
+          durationSec: Math.round(track.durationSec),
+        }),
+      });
+    }
+  }, [position, track]);
 
   useEffect(() => {
     const state = usePlayerStore.getState();

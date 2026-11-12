@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { id } from "@/lib/i18n/id";
 
 import { CoverImage } from "./cover-image";
+import { LikeButton, type LikeTrack } from "./like-button";
 
 type TrackRowProps = {
   title: string;
@@ -26,6 +27,7 @@ type TrackRowProps = {
   onEnqueue?: () => void;
   onAddToPlaylist?: () => void;
   onCopyLink?: () => void;
+  likeTrack?: LikeTrack;
   className?: string;
 };
 
@@ -41,6 +43,7 @@ export function TrackRow({
   onEnqueue,
   onAddToPlaylist,
   onCopyLink,
+  likeTrack,
   className,
 }: TrackRowProps) {
   return (
@@ -92,6 +95,7 @@ export function TrackRow({
         <span className="text-muted block truncate text-sm">{artist}</span>
       </button>
       <span className="text-muted text-sm">{duration}</span>
+      {likeTrack && <LikeButton track={likeTrack} />}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button

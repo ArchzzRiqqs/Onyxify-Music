@@ -1,0 +1,34 @@
+import { NextResponse } from "next/server";
+
+import { requireUser } from "@/lib/auth";
+import {
+  listRecentlyPlayed,
+  recordPlay,
+} from "@/features/library/server/use-cases";
+import {
+  listSchema,
+  trackSnapshotSchema,
+} from "@/features/library/server/schemas";
+
+export async function GET(request: Request) {
+  const user = await requireUser();
+  const input = listSchema.parse(
+    Object.fromEntries(new URL(request.url).searchParams),
+  );
+  const rows = await listRecentlyPlayed(user.id, input.limit, input.cursor);
+  return NextResponse.json({
+    data: rows.slice(0, input.limit),
+    meta: {
+      nextCursor: rows.length > input.limit ? rows[input.limit - 1]?.id : null,
+    },
+  });
+}
+
+export async function POST(request: Request) {
+  const user = await requireUser();
+  const track = trackSnapshotSchema.parse(await request.json());
+  return NextResponse.json(
+    { data: await recordPlay(user.id, track) },
+    { status: 201 },
+  );
+}
